@@ -1,0 +1,203 @@
+/* App.css - Master Balanced Layout with Scaled Down Typography */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 1. Root Container */
+.dashboard-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at center, #1a233b 0%, #0b0f19 100%);
+}
+
+/* 2. Top Header - Aligned to the absolute top center */
+.dashboard-header {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Centers the title perfectly in the screen horizontal center */
+  align-items: center;
+  background-color: #111827;
+  padding: 25px 40px;
+  border-bottom: 1px solid #1f2937;
+}
+
+.dashboard-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+/* 3. Main Content Wrapper - Set to a clean, moderate width */
+.dashboard-grid {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 650px; /* Moderate width: stops the inputs from being too wide */
+  margin: 0 auto;    /* Centers the entire workspace block on your monitor */
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 4. Main Panel Card Tool Container */
+.tool-card {
+  background-color: #111827;
+  border-radius: 16px;
+  padding: 35px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.tool-card h2 {
+  font-size: 1.6rem;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.panel-subtitle {
+  color: #94a3b8;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* 5. Transfer Form Input Core Layout */
+.transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Interactive Forms Input Elements styling */
+.transfer-form input, 
+.transfer-form select {
+  width: 100%;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: #fff;
+  padding: 14px 18px;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.transfer-form input:focus, 
+.transfer-form select:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.input-readonly {
+  background-color: #141b2d !important;
+  color: #94a3b8 !important;
+  border-color: #242f47 !important;
+  cursor: not-allowed;
+}
+
+/* 6. Centered Balance View Block - Stacked Design (Smaller Sizes) */
+.balance-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #1f2937;
+  display: flex;
+  flex-direction: column; /* Kept vertically stacked as requested */
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.balance-card label {
+  font-size: 0.95rem; /* Reduced label text styling */
+  color: #94a3b8;
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Targets ONLY the green "19 USDC" value text to make it perfectly subtle */
+.balance-display {
+  font-size: 1.4rem; /* Lowered font footprint to look sleek and clean */
+  font-weight: 700;
+  color: #10b981; 
+  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+}
+
+/* 7. Primary Action Interactive Buttons */
+.submit-btn {
+  background: linear-gradient(to right, #0284c7, #0ea5e9);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+}
+
+.submit-btn:disabled {
+  background: #374151;
+  color: #4b5563;
+  cursor: not-allowed;
+}
+
+/* 8. Notification Feedbacks Banner Components */
+.status-banner {
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.status-banner.error {
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+
+.status-banner.success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid #10b981;
+  color: #a7f3d0;
+}
