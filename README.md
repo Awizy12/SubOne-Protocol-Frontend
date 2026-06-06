@@ -1,16 +1,22 @@
-# React + Vite
+# SubOne Protocol - Frontend Dashboard 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to the official frontend client for the **SubOne Protocol**. This dashboard provides a sleek, responsive, and completely centralized user interface designed to manage multi-chain liquidity routing and monitor gasless transaction execution streams in real-time.
 
-Currently, two official plugins are available:
+## 🌟 Core Features Implemented (Phase 3 Complete)
+* **Gasless Polling Engine UI:** Built-in reactive visual queues tracking asynchronous transaction states across connected networks without requiring native gas tokens.
+* **Perfect Layout Alignment:** Fully refactored interface utilizing structured CSS classes to guarantee precise visual positioning and responsive element rendering.
+* **Cross-Chain Monitoring:** Native design structures prepared to track USDC transfers seamlessly across Polygon, Arbitrum, Base, and Avalanche testnets.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tech Stack
+* **Framework:** React.js (Vite Bundler)
+* **Styling:** Structured Native CSS Layout Engine
+* **Version Control:** Git managed via GitHub
 
-## React Compiler
+## 🚀 Local Development Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Follow these quick steps to get the dashboard running locally on your machine:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Clone & Navigate
+```bash
+git clone [https://github.com/Awizy12/SubOne-Protocol-Frontend.git](https://github.com/Awizy12/SubOne-Protocol-Frontend.git)
+cd SubOne-Protocol-Frontend

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; 
 
 function App() {
+  // Define the API base URL for environment-aware switching
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   // 1. User session state & Circle API state
   const [username] = useState('subone_test_user_01'); 
   const [dbUser, setDbUser] = useState(null);
@@ -18,11 +21,11 @@ function App() {
   const [txResult, setTxResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 2. Isolated function to fetch the balance so we can reuse it
+  // 2. Isolated function to fetch the balance (Updated to force fresh data)
   const fetchCurrentBalance = async (targetWalletId) => {
     if (!targetWalletId) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/wallet-balances?walletId=${targetWalletId}`);
+      const res = await fetch(`${API_BASE}/api/wallet-balances?walletId=${targetWalletId}&t=${Date.now()}`);
       const data = await res.json();
       const usdc = data.balances?.find(b => b.token?.symbol === 'USDC');
       setBalance(usdc ? usdc.amount : '0.00');
@@ -36,11 +39,11 @@ function App() {
   useEffect(() => {
     const initData = async () => {
       try {
-        const userRes = await fetch(`http://localhost:5000/api/user-profile/${username}`);
+        const userRes = await fetch(`${API_BASE}/api/user-profile/${username}`);
         const userData = await userRes.json();
         if (userData.success) setDbUser(userData.user);
 
-        const walletRes = await fetch('http://localhost:5000/api/list-wallets');
+        const walletRes = await fetch(`${API_BASE}/api/list-wallets`);
         const walletData = await walletRes.json();
         setAvailableWallets(walletData);
 
@@ -100,7 +103,7 @@ function App() {
     setTxResult(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/execute-transaction', {
+      const response = await fetch(`${API_BASE}/api/execute-transaction`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,10 +119,8 @@ function App() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Aligns with the backend payload structure
         setTxResult(data.transaction || data);
         
-        // 🔄 AUTOMATIC SMART POLLING SYSTEM WITH ASYNC LEAK CLEANUP
         let checkCount = 0;
         const interval = setInterval(() => {
           fetchCurrentBalance(walletId);
