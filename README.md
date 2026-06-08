@@ -14,7 +14,7 @@ Welcome to the official frontend client for the **SubOne Protocol**. This dashbo
 
 ## 🚀 Local Development Setup
 
-Follow these quick steps to get the dashboard running locally on your machine:
+Follow these steps to get the dashboard running locally:
 
 ### 1. Clone & Navigate
 ```bash
