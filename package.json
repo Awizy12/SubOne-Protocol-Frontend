@@ -13,9 +13,10 @@
     "@circle-fin/adapter-viem-v2": "^1.11.1",
     "@circle-fin/app-kit": "^1.6.1",
     "@circle-fin/w3s-pw-web-sdk": "^1.1.11",
-    "axios": "^1.16.1",
+    "axios": "^1.18.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "socket.io-client": "^4.8.3",
     "viem": "^2.51.2"
   },
   "devDependencies": {

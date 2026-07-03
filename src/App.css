@@ -22,11 +22,11 @@ body {
   background: radial-gradient(circle at center, #1a233b 0%, #0b0f19 100%);
 }
 
-/* 2. Top Header - Aligned to the absolute top center */
+/* 2. Top Header */
 .dashboard-header {
   width: 100%;
   display: flex;
-  justify-content: center; /* Centers the title perfectly in the screen horizontal center */
+  justify-content: center;
   align-items: center;
   background-color: #111827;
   padding: 25px 40px;
@@ -41,15 +41,16 @@ body {
   text-align: center;
 }
 
-/* 3. Main Content Wrapper - Set to a clean, moderate width */
+/* 3. Main Content Wrapper */
 .dashboard-grid {
   flex-grow: 1;
   width: 100%;
-  max-width: 650px; /* Moderate width: stops the inputs from being too wide */
-  margin: 0 auto;    /* Centers the entire workspace block on your monitor */
+  max-width: 650px;
+  margin: 0 auto;
   padding: 40px 20px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* 4. Main Panel Card Tool Container */
@@ -67,13 +68,6 @@ body {
   color: #fff;
   font-weight: 700;
   margin-bottom: 8px;
-  text-align: center;
-}
-
-.panel-subtitle {
-  color: #94a3b8;
-  margin-bottom: 30px;
-  font-size: 0.95rem;
   text-align: center;
 }
 
@@ -100,7 +94,6 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Interactive Forms Input Elements styling */
 .transfer-form input, 
 .transfer-form select {
   width: 100%;
@@ -127,14 +120,14 @@ body {
   cursor: not-allowed;
 }
 
-/* 6. Centered Balance View Block - Stacked Design (Smaller Sizes) */
+/* 6. Balance Card */
 .balance-card {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
   border-radius: 12px;
   padding: 16px;
   border: 1px solid #1f2937;
   display: flex;
-  flex-direction: column; /* Kept vertically stacked as requested */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 10px 0;
@@ -142,22 +135,19 @@ body {
 }
 
 .balance-card label {
-  font-size: 0.95rem; /* Reduced label text styling */
+  font-size: 0.95rem;
   color: #94a3b8;
   margin-bottom: 6px;
   font-weight: 500;
-  letter-spacing: 0.02em;
 }
 
-/* Targets ONLY the green "19 USDC" value text to make it perfectly subtle */
 .balance-display {
-  font-size: 1.4rem; /* Lowered font footprint to look sleek and clean */
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #10b981; 
-  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  color: #10b981;
 }
 
-/* 7. Primary Action Interactive Buttons */
+/* 7. Buttons */
 .submit-btn {
   background: linear-gradient(to right, #0284c7, #0ea5e9);
   color: #fff;
@@ -167,37 +157,55 @@ body {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
   width: 100%;
   margin-top: 10px;
 }
 
-.submit-btn:hover {
-  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+.submit-btn:disabled { background: #374151; color: #4b5563; cursor: not-allowed; }
+
+/* 8. Notification Banners */
+.status-banner { padding: 16px; border-radius: 8px; font-size: 0.95rem; width: 100%; margin-top: 10px; }
+.status-banner.error { background-color: rgba(220, 38, 38, 0.1); border: 1px solid #ef4444; color: #fca5a5; }
+.status-banner.success { background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #a7f3d0; }
+
+/* 9. Refined History Table Styles */
+.history-panel table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  margin-top: 20px; 
+  color: #e2e8f0; 
+  table-layout: fixed; 
+}
+.history-panel th { 
+  text-align: left; 
+  font-size: 0.65rem; 
+  text-transform: uppercase; 
+  color: #64748b; 
+  padding: 10px 5px; 
+  border-bottom: 1px solid #1f2937; 
+}
+.history-panel td { 
+  padding: 12px 5px; 
+  border-bottom: 1px solid #1f2937; 
+  font-size: 0.8rem; 
+  position: relative;
+  vertical-align: middle;
 }
 
-.submit-btn:disabled {
-  background: #374151;
-  color: #4b5563;
-  cursor: not-allowed;
+/* Priority Container for Sync Button */
+.sync-btn-container {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
 }
 
-/* 8. Notification Feedbacks Banner Components */
-.status-banner {
-  padding: 16px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  width: 100%;
+.status-badge { 
+  padding: 4px 6px; 
+  border-radius: 4px; 
+  font-size: 0.7rem; 
+  font-weight: 600; 
+  text-transform: uppercase; 
 }
-
-.status-banner.error {
-  background-color: rgba(220, 38, 38, 0.1);
-  border: 1px solid #ef4444;
-  color: #fca5a5;
-}
-
-.status-banner.success {
-  background-color: rgba(16, 185, 129, 0.1);
-  border: 1px solid #10b981;
-  color: #a7f3d0;
-}
+.status-badge.pending { background: #fef3c7; color: #92400e; }
+.status-badge.success { background: #064e3b; color: #34d399; }
+.status-badge.failed { background: #7f1d1d; color: #f87171; }
