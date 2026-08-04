@@ -3,8 +3,6 @@ import { io } from 'socket.io-client';
 import './App.css'; 
 import { useTransactionStatus } from './hooks/useTransactionStatus';
 
-// STABILITY FIX: Added 'polling' to match the server configuration
-// This allows the connection to stay alive if the websocket is briefly interrupted.
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
   transports: ['websocket', 'polling'],
   reconnectionAttempts: 10,
@@ -19,12 +17,13 @@ function App() {
 
   const [username] = useState('subone_test_user_01'); 
   const [dbUser, setDbUser] = useState(null);
-  const [walletId, setWalletId] = useState('');
+  const [walletId, setWalletId] = useState('1d94fc2c-f649-5d38-bda8-439b69effbaa');
   const [balance, setBalance] = useState('0.00'); 
   const [totalBalance, setTotalBalance] = useState('0.00');
-  const [destinationAddress, setDestinationAddress] = useState('');
-  const [amount, setAmount] = useState('0.5');
-  const [network, setNetwork] = useState('polygon'); 
+  
+  const [destinationAddress, setDestinationAddress] = useState('0x22624036d28F96eE2e281822399790E617097241');
+  const [amount, setAmount] = useState('10.0');
+  const [network, setNetwork] = useState('arc'); 
   const [availableWallets, setAvailableWallets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -32,11 +31,11 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [history, setHistory] = useState([]);
 
-  // FIX: Stability - listener remains outside the dependency loop
+  const [abiFunctionSignature, setAbiFunctionSignature] = useState('subscribe(uint256)');
+  const [abiParameters, setAbiParameters] = useState('10000000');
+
   useEffect(() => {
     const handleUpdate = (data) => {
-      console.log("📡 WebSocket Received Update:", data);
-      
       setHistory(prev => prev.map(tx => 
         tx.circleTxId === data.circleTxId ? { ...tx, status: data.status } : tx
       ));
@@ -77,21 +76,6 @@ function App() {
     } finally { setIsRefreshing(false); }
   }, [API_BASE, username]);
 
-  const handleSyncTransaction = async (e, circleTxId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const res = await fetch(`${API_BASE}/api/sync-transaction/${circleTxId}`);
-      const data = await res.json();
-      if (data.success) fetchHistory();
-    } catch (err) { console.error("Sync error:", err); }
-  };
-
-  const handleManualSync = (e) => {
-    e.preventDefault();
-    fetchHistory();
-  };
-
   useEffect(() => {
     const initData = async () => {
       try {
@@ -104,7 +88,7 @@ function App() {
         setAvailableWallets(walletData);
 
         if (walletData?.length > 0) {
-          const match = walletData.find(w => w.blockchain.toLowerCase().includes('matic'));
+          const match = walletData.find(w => w.blockchain.toLowerCase().includes('arc'));
           if (match) setWalletId(match.id);
         }
         fetchHistory();
@@ -128,6 +112,7 @@ function App() {
     
     const match = availableWallets.find(w => {
       const bc = w.blockchain.toLowerCase();
+      if (selectedNetwork === 'arc') return bc.includes('arc');
       if (selectedNetwork === 'polygon') return bc.includes('matic');
       if (selectedNetwork === 'arbitrum') return bc.includes('arb');
       if (selectedNetwork === 'base') return bc.includes('base');
@@ -155,10 +140,19 @@ function App() {
     setTxResult(null);
 
     try {
+      const parsedParams = abiParameters.split(',').map(p => p.trim());
+
       const response = await fetch(`${API_BASE}/api/execute-transaction`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletId, destinationAddress, amount, network }),
+        body: JSON.stringify({ 
+          walletId, 
+          destinationAddress, 
+          amount, 
+          network,
+          abiFunctionSignature,
+          abiParameters: parsedParams
+        }),
       });
 
       const data = await response.json();
@@ -174,14 +168,14 @@ function App() {
         setErrorMessage(data.error || 'Transaction processing failed.');
       }
     } catch (err) {
-      setErrorMessage('Network error initiating cross-chain transaction.');
+      setErrorMessage('Network error initiating contract transaction.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container" style={{ maxWidth: '700px', margin: '0 auto' }}>
       <header className="dashboard-header">
         <h1>SubOne Protocol</h1>
       </header>
@@ -191,16 +185,9 @@ function App() {
       </div>
 
       <main className="dashboard-grid">
-        <section className="transfer-panel tool-card">
-          <h2>Multi-Chain Transfer Engine</h2>
-          <p className="subtitle">Circle Programmable Wallets Core</p>
-          
-          {alerts.length > 0 && (
-            <div className="alert-panel" style={{ border: '1px solid #ef4444', padding: '10px', marginBottom: '20px', borderRadius: '8px', backgroundColor: '#fef2f2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div><h3 style={{ color: '#ef4444', margin: '0 0 5px 0', fontSize: '1rem' }}>⚠️ {alerts.length} Transactions Failed</h3></div>
-              <button onClick={() => window.scrollTo(0, document.body.scrollHeight)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>View History</button>
-            </div>
-          )}
+        <section className="transfer-panel tool-card" style={{ width: '100%' }}>
+          <h2>Safe-Based Treasury Manager</h2>
+          <p className="subtitle">Arc Native Guardrail Engine Enabled</p>
           
           {activeTxHash && (
             <div className="status-banner info">
@@ -212,6 +199,7 @@ function App() {
             <div className="form-group">
               <label htmlFor="networkSelect">1. Target EVM Blockchain</label>
               <select id="networkSelect" value={network} onChange={(e) => handleNetworkChange(e.target.value)}>
+                <option value="arc">Arc Testnet</option>
                 <option value="polygon">Polygon Amoy</option>
                 <option value="arbitrum">Arbitrum Sepolia</option>
                 <option value="avalanche">Avalanche Fuji</option>
@@ -220,7 +208,7 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="sourceWallet">2. Source Wallet ID (Auto-Selected)</label>
+              <label htmlFor="sourceWallet">2. Source Wallet ID</label>
               <input id="sourceWallet" type="text" readOnly value={walletId || 'No active wallet mapped'} className="input-readonly" />
             </div>
             
@@ -230,90 +218,51 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="destination">3. Destination Wallet Address</label>
+              <label htmlFor="destination">3. Treasury Contract Address</label>
               <input id="destination" type="text" required placeholder="0x..." value={destinationAddress} onChange={(e) => setDestinationAddress(e.target.value)} />
             </div>
 
             <div className="form-group">
               <label htmlFor="amountInput">4. Amount (USDC)</label>
-              <input id="amountInput" type="number" step="any" required placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <input 
+                id="amountInput" 
+                type="number" 
+                step="any" 
+                required 
+                placeholder="0.00" 
+                value={amount} 
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setAmount(val);
+                  if (!isNaN(val) && val !== '') {
+                    setAbiParameters(Math.floor(parseFloat(val) * 1000000).toString());
+                  }
+                }} 
+              />
             </div>
 
-            {errorMessage && <div className="status-banner error"><strong>Error:</strong> {errorMessage}</div>}
+            <div className="form-group">
+              <label htmlFor="abiSig">5. ABI Function Signature</label>
+              <input id="abiSig" type="text" required value={abiFunctionSignature} onChange={(e) => setAbiFunctionSignature(e.target.value)} />
+            </div>
 
-            {txResult && (
+            <div className="form-group">
+              <label htmlFor="abiParams">6. ABI Parameters (comma-separated)</label>
+              <input id="abiParams" type="text" required value={abiParameters} onChange={(e) => setAbiParameters(e.target.value)} />
+            </div>
+
+            {errorMessage && <div className="status-banner error" style={{ color: '#ef4444', background: '#fee2e2', padding: '10px', borderRadius: '5px' }}><strong>🚫 Rebalance Rejected:</strong> {errorMessage}</div>}
+
+            {txResult && !errorMessage && (
               <div className="status-banner success">
-                <strong>Transaction Executed!</strong>
-                <p>Status: {txResult.status}</p>
+                <strong>Transaction Executed Successfully!</strong>
               </div>
             )}
 
             <button type="submit" className="submit-btn" disabled={loading || !walletId}>
-              {loading ? 'Executing on Chain...' : 'Execute Transaction'}
+              {loading ? 'Validating Guardrail & Executing...' : 'Execute Treasury Call'}
             </button>
           </form>
-        </section>
-
-        <section className="history-panel tool-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2>Transaction History</h2>
-            <button 
-              onClick={handleManualSync} 
-              disabled={isRefreshing}
-              style={{ background: isRefreshing ? '#374151' : '#1f2937', border: '1px solid #374151', color: '#38bdf8', padding: '5px 10px', borderRadius: '4px', cursor: isRefreshing ? 'wait' : 'pointer' }}
-            >
-              {isRefreshing ? 'Refreshing...' : 'Refresh History'}
-            </button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Network</th>
-                <th>Amount (USDC)</th>
-                <th>Tx Hash</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {history.map((tx) => (
-                <tr key={tx._id}>
-                  <td>{new Date(tx.createdAt).toLocaleDateString()}</td>
-                  <td>{tx.blockchain}</td>
-                  <td>{tx.amount}</td>
-                  <td>
-                    {tx.txHash ? (
-                      <a href={`https://amoy.polygonscan.com/tx/${tx.txHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none', fontSize: '0.7rem' }}>
-                        {tx.txHash.substring(0, 8)}...
-                      </a>
-                    ) : (
-                      <div style={{ display: 'flex', gap: '5px' }}>
-                        <button 
-                          type="button"
-                          onClick={(e) => handleSyncTransaction(e, tx.circleTxId)}
-                          style={{ backgroundColor: '#f59e0b', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '0.7rem', cursor: 'pointer', color: '#000', fontWeight: 'bold' }}
-                        >
-                          Sync
-                        </button>
-                        {tx.status === 'FAILED' && (
-                          <button 
-                            onClick={async () => {
-                              await fetch(`${API_BASE}/api/transaction/${tx._id}`, { method: 'DELETE' });
-                              fetchHistory();
-                            }}
-                            style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 6px', fontSize: '0.7rem', cursor: 'pointer' }}
-                          >
-                            X
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </td>
-                  <td><span className={`status-badge ${tx.status?.toLowerCase()}`}>{tx.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </section>
       </main>
     </div>
